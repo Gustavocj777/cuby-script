@@ -1,0 +1,3 @@
+name: rede_segura
+version: 1.0.0
+desc: Modulo nativo de auditoria de rede para Linux e Termux
