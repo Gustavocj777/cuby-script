@@ -1,0 +1,5 @@
+#include <stdio.h>
+int main() {
+    printf("[CUBY v0.1] Projeto inicializado com sucesso via -dir!\n");
+    return 0;
+}

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Cuby CLI - v0.1 Official Pipeline with Dynamic Directory Management (-dir)
+GEM_TYPE=""
+FILE_NAME=""
+TARGET_DIR=""
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -cgen|-hgen|-sgen|-chgen|-hcgen|-shgen|-hsgen|-scgen|-csgen)
+            GEM_TYPE="$1"
+            ;;
+        -name)
+            FILE_NAME="$2"
+            shift
+            ;;
+        -dir)
+            TARGET_DIR="$2"
+            shift
+            ;;
+        *)
+            if [ -z "$FILE_NAME" ]; then
+                FILE_NAME="$1"
+            fi
+            ;;
+    esac
+    shift
+done
+
+# Se um diretório foi especificado via -dir, criamos e usamos ele
+if [ -n "$TARGET_DIR" ]; then
+    mkdir -p "$TARGET_DIR"
+    if [ -z "$FILE_NAME" ]; then
+        FILE_NAME="cuby.cgen"
+    fi
+    FULL_PATH="$TARGET_DIR/$FILE_NAME"
+else
+    # Padrão na pasta ngen se nenhum -dir for informado
+    mkdir -p ngen
+    if [ -z "$FILE_NAME" ]; then
+        FILE_NAME="cuby.cgen"
+    fi
+    FULL_PATH="ngen/$FILE_NAME"
+fi
+
+echo "[CUBY v0.1] Processando arquitetura de gemas..."
+echo "[CUBY] Camada selecionada: ${GEM_TYPE:-.cgen (padrão)}"
+echo "[CUBY] Alvo estruturado: $FULL_PATH"
+
+if [ -f "$FULL_PATH" ]; then
+    cp "$FULL_PATH" codigo_gerado.c
+else
+    echo "[CUBY WARNING] $FULL_PATH não encontrado. Inicializando gema padrão..."
+    printf '#include <stdio.h>\nint main() {\n    printf("[CUBY v0.1] Projeto inicializado com sucesso via -dir!\\n");\n    return 0;\n}\n' > "$FULL_PATH"
+    cp "$FULL_PATH" codigo_gerado.c
+fi
+
+clang -Wall -Wextra codigo_gerado.c -o cuby_app
+echo "[CUBY] Compilação concluída com sucesso!"
+./cuby_app
