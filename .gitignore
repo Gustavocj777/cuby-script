@@ -1,0 +1,12 @@
+# Pastas de sistema e configurações globais que não devem entrar no projeto
+.cache/
+.local/
+.ssh/
+.termux/
+.bash_history
+.gitconfig
+
+# Binários e arquivos temporários de build da Cuby
+codigo_gerado.c
+cuby_app
+*.o

@@ -1,50 +1,32 @@
 #!/bin/bash
 
-# Cuby v0.1 - Automated Build & Pack Engine
-echo "[CUBY BUILD] Iniciando automação do núcleo ngen..."
+echo "[CUBY BUILD] Iniciando automação do núcleo ngen (Modo Modular)..."
 
-# 1. Detectar arquivos de gema ou diretórios ativos
 TARGET_DIR=""
-FILE_NAME=""
-
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -dir)
             TARGET_DIR="$2"
             shift
             ;;
-        -name)
-            FILE_NAME="$2"
-            shift
-            ;;
     esac
     shift
 done
 
-# Define o caminho padrão caso não seja informado
 if [ -z "$TARGET_DIR" ]; then
     TARGET_DIR="ngen"
 fi
 
-if [ -z "$FILE_NAME" ]; then
-    FILE_NAME="cuby.cgen"
+if [ ! -d "$TARGET_DIR" ]; then
+    echo "[CUBY ERROR] Diretório $TARGET_DIR não encontrado."
+    exit 1
 fi
 
-FULL_PATH="$TARGET_DIR/$FILE_NAME"
+# Empacotamento Matricial: Junta TODOS os arquivos .c do diretório em codigo_gerado.c
+echo "[CUBY BUILD] Empacotando e fundindo todos os módulos .c de $TARGET_DIR..."
+cat "$TARGET_DIR"/*.c > codigo_gerado.c
 
-# 2. Garantir que a estrutura de diretórios e arquivos exista
-mkdir -p "$TARGET_DIR"
-
-if [ ! -f "$FULL_PATH" ]; then
-    echo "[CUBY BUILD] Aviso: $FULL_PATH não encontrado. Gerando gema padrão..."
-    printf '#include <stdio.h>\nint main() {\n    printf("[CUBY v0.1] Núcleo autogerado com sucesso!\\n");\n    return 0;\n}\n' > "$FULL_PATH"
-fi
-
-# 3. Empacotamento Matricial (Flatten / Vetorização do ngen)
-echo "[CUBY BUILD] Empacotando gemas para codigo_gerado.c..."
-cp "$FULL_PATH" codigo_gerado.c
-
-# 4. Compilação Universal via Clang
+# Compilação Universal via Clang do pacote fundido
 echo "[CUBY BUILD] Compilando pacote unificado..."
 clang -Wall -Wextra codigo_gerado.c -o cuby_app
 
