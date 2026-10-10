@@ -1,0 +1,7 @@
+// Cubyfile - Núcleo da linguagem Cuby
+// Estrutura personalizada baseada em gemas
+
+gen main {
+    // Ponto de entrada processado pelo ecossistema
+    Retur 0;
+};
